@@ -21,7 +21,17 @@ public class testClient
     private static long endTime;
     private static List<String> devicelist = new ArrayList<>();
     private static Random random = new Random();
-    public static String IOTDB_IP = "192.168.35.23:6667";
+
+    public static String[] vehicles = {
+        "accelerationFB", "accelerationLR", "speed_TypeA", "steeringAngle_TypeA", "EngineRPM_TypeA",
+        "TirePressureFL_kpa", "FuelGageIndication", "latitude", "longitude", "AccelPedalAngle_TypeA",
+        "TirePressureFR_kpa", "TirePressureRL_kpa", "TirePressureRR_kpa", "AmbientTemperature",
+        "TemperatureD",
+        "turnLampSwitchStatus", "ATShiftPosition", "BrakePedal", "DoorOpenD", "ParkingBrake",
+        "EcoModeIndicator",
+        "PowerModeSelect_TypeA", "SportModeSelect", "WindowPositionD", "AirConIndicator",
+        "Odometer_km", "HeadLamp_TypeB"
+    };
 
     public static int query_count = 0;
 
@@ -36,10 +46,15 @@ public class testClient
             try {
                 //List<Pair<Long, List<List<String>>>> ret = getRange(usernames, vclIds, tmnlIds, metrics, starttime, endtime);
                 StringBuilder qry = new StringBuilder("");
-                qry.append("select * from ").append(devicelist.get(deviceNum)).append(" where time >= ").append(startTime).append(" and time <= ").append(endTime);
+                qry.append("select ").append(vehicles[0]);
+                for (int i = 1; i < vehicles.length; i++) {
+                    qry.append(",").append(vehicles[i]);
+                }
+                qry.append(" from ").append(devicelist.get(deviceNum)).append(" where time >= ").append(startTime).append(" and time <= ").append(endTime);
                 long st = System.currentTimeMillis();
                 Statement statement = connection.createStatement();
                 statement.execute(qry.toString());
+                // TODO: increase fetch size
 
                 long ed = System.currentTimeMillis();
                 //totaldatapoints += v;
@@ -70,7 +85,7 @@ public class testClient
                     Long.parseLong(tmp.split("\\.")[2]);
                     devicelist.add(tmp);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
 
