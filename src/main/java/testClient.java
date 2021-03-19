@@ -54,6 +54,12 @@ public class testClient
                 long st = System.currentTimeMillis();
                 Statement statement = connection.createStatement();
                 statement.execute(qry.toString());
+                ResultSet resultSet = statement.getResultSet();
+                int rownum = 0;
+                while (resultSet.next()) {
+                    rownum++;
+                }
+
                 // TODO: increase fetch size
 
                 long ed = System.currentTimeMillis();
@@ -61,7 +67,7 @@ public class testClient
                 totalquery++;
                 totalcost += ed - st;
                 //totalline += ret.size();
-                LOGGER.info("Query, {}, cost {}", qry.toString(), totalcost);
+                LOGGER.info("Query, {}, cost, {}, {}, rows", qry.toString(), totalcost, rownum);
             } catch (Exception e) {
                 LOGGER.error("query failed: {}", e.getMessage());
             }
@@ -92,7 +98,10 @@ public class testClient
             startTime = conf.getStart();
             endTime = conf.getEnd();
             int round = conf.getLoop();
+            long st = System.currentTimeMillis();
             towardsquerytest(1, round, connection);
+            long ed = System.currentTimeMillis();
+            LOGGER.info("Total time cost:{}", ed - st);
             statement.close();
             connection.close();
         } catch (SQLException e) {
@@ -107,8 +116,8 @@ public class testClient
     public static TestConfig loadConfig() {
         TestConfig conf = new TestConfig();
         try {
-            Resource resource = new ClassPathResource("properties.config");
-            InputStream is = resource.getStream();
+            String fileName = "properties.config";
+            InputStream is = new FileInputStream(fileName);
             Properties properties = new Properties();
             properties.load(is);
 

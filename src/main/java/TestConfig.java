@@ -29,7 +29,7 @@ public class TestConfig {
     }
 
     public void setStart(int start) {
-        this.startTime = startTime;
+        this.startTime = start;
     }
 
     public int getEnd() {
